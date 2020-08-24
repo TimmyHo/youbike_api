@@ -1,17 +1,25 @@
 const mongoose = require('mongoose');
 
+// geojson is long, lat (not lat, long)
+const pointSchema = new mongoose.Schema({
+    type: {
+      type: String,
+      enum: ['Point'],
+      required: true
+    },
+    coordinates: {
+      type: [Number],
+      required: true
+    }
+  });
 
 const stationInfoSchema = new mongoose.Schema({
     stationId: {
         type: String,
         required: true,
     },
-    latitude: {
-        type: Number,
-        required: true,
-    },
-    longitude: {
-        type: Number,
+    location: {
+        type: pointSchema,
         required: true,
     },
 
@@ -72,6 +80,8 @@ stationInfoSchema.index({
     stationAddress_en: 'text',
     stationArea_en: 'text'
 });
+
+stationInfoSchema.index( { location : "2dsphere" } )
 
 const StationInfo = mongoose.model('StationInfo', stationInfoSchema);
 

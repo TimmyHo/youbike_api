@@ -1,4 +1,5 @@
 const fs = require('fs');
+const db = require('../db/mongoose');
 const mongoose = require('mongoose');
 
 const StationInfo = require('../models/stationInfo');
@@ -19,8 +20,13 @@ let stations = Object.values(jsonObject.retVal);
 stations.forEach(async (station) => {
     const stationInfo = new StationInfo({
         stationId: station.sno,
-        latitude: station.lat,
-        longitude: station.lng,
+        location: {
+            type: 'Point',
+            coordinates: [
+                station.lng,
+                station.lat
+            ]
+        },
 
         stationName: station.sna,
         stationAddress: station.ar,

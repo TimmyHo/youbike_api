@@ -17,7 +17,7 @@ app.get('', (req, res) => {
     });
 });
 
-app.get('/stations/search', async (req, res) => {
+app.get('/stations/textsearch', async (req, res) => {
     const searchTerm = req.query.q;
     const searchTermRegEx = new RegExp(searchTerm);
 
@@ -30,7 +30,7 @@ app.get('/stations/search', async (req, res) => {
         { stationArea: { $regex: searchTermRegEx, $options: 'i' }},
     ]});
 
-    const stationSearchEn =  await StationInfo.find({ $text: { $search: searchTerm }});
+    const stationSearchEn = await StationInfo.find({ $text: { $search: searchTerm }});
 
     // Combine both chinese and english search results and removes duplicates
     const allStations = [...new Set([...stationSearch, ...stationSearchEn])];
@@ -39,7 +39,32 @@ app.get('/stations/search', async (req, res) => {
     res.send({
         stations: allStations
     });
-})
+});
+
+
+app.get('/stations/locsearch', async (req, res) => {
+    const locQuery = req.query.loc;
+    const locParams = locQuery.split(',');
+
+    const stationSearchLoc = await StationInfo.find({
+        location: { 
+            $near: {
+                $geometry: {
+                    type: 'Point',
+                    coordinates: [locParams[1], locParams[0]]
+                },
+                $maxDistance: 1000
+            }
+        }
+    });
+
+    console.log(`Searched for: ${locQuery} and found ${stationSearchLoc.length} stations`);
+
+    res.send({
+        stations: stationSearchLoc
+    });
+});
+
 
 app.listen(port,  () => {
     console.log('Server is up on port '+port);
