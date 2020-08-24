@@ -1,21 +1,21 @@
 const fs = require('fs');
-const db = require('../db/mongoose');
-
+const mongoose = require('mongoose');
 
 const StationInfo = require('../models/stationInfo');
 
 let jsonFilePath = 'YouBikeTP.json';
 //jsonFilePath = 'YouBikeTP-min.json';
 
-StationInfo.deleteMany({}, () => {
-    console.log('Deleted all stations');
-});
+if (Object.keys(mongoose.connection.collections).includes('stationinfos')) {
+    mongoose.connection.dropCollection('stationinfos');
+    console.log('Deleting stationinfos collection');
+}
 
 const contents = fs.readFileSync(jsonFilePath);
 
 let jsonObject = JSON.parse(contents);
+let stations = Object.values(jsonObject.retVal);
 
-let stations = Object.values(jsonObject.retVal)
 stations.forEach(async (station) => {
     const stationInfo = new StationInfo({
         stationId: station.sno,
@@ -38,7 +38,15 @@ stations.forEach(async (station) => {
         active: station.act,
     });
 
-    // console.log(stationInfo)
+    // console.log(stationInfo);
 
-    await stationInfo.save((err, stn) => {if (err) console.log(station)});
+    await stationInfo.save((err, stn) => {
+        if (err) {
+            console.log(station)
+        }
+
+        // console.log(stn);
+    });
 });
+
+console.log(`Added ${stations.length} stations`);

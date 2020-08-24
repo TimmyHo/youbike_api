@@ -8,4 +8,3 @@ mongoose.connect(mongoDbUrl, {
     useFindAndModify: false,
     useUnifiedTopology: true
 });
-

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+
 const stationInfoSchema = new mongoose.Schema({
     stationId: {
         type: String,
@@ -60,6 +61,16 @@ const stationInfoSchema = new mongoose.Schema({
     }
 }, {
     timestamps: false
+});
+
+// Only fulltext search english for now
+stationInfoSchema.index({
+    // stationName: 'text', 
+    // stationAddress: 'text',
+    // stationArea: 'text',
+    stationName_en: 'text', 
+    stationAddress_en: 'text',
+    stationArea_en: 'text'
 });
 
 const StationInfo = mongoose.model('StationInfo', stationInfoSchema);
