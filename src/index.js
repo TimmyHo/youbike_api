@@ -17,20 +17,80 @@ app.get('', (req, res) => {
     });
 });
 
+app.get('/stations/search', async (req, res) => {
+    const searchTerm = req.query.q;
+    const locQuery = req.query.loc;
+
+    console.log(`Search term is: ${searchTerm} -- Location is: ${locQuery}`);
+    let agg = StationInfo.aggregate();
+
+    // first search by location because use case is want to find the nearest youbike
+    // stations to the user (then it is the name/address of the you bike station)
+    if (locQuery) {    
+        const locParams = locQuery.split(',');
+    
+        agg = agg.near({
+            near: {
+                type: 'Point',
+                coordinates: [parseFloat(locParams[1]), parseFloat(locParams[0])]
+            },
+            distanceField: 'distanceFromPoint', // required
+            maxDistance: 1000
+        });
+    }
+
+    if (searchTerm) {
+        const searchTermRegEx = new RegExp(searchTerm, 'i');
+
+        // Since the geoindex may already be used and the logic
+        // will be easier, use the regex search for english instead
+        // of the search text index (since can't have both geoindex
+        // and search text index in the same query/aggregate).
+        agg = agg.match({ $or: [
+                { stationName: { $regex: searchTermRegEx }},
+                { stationAddress: { $regex: searchTermRegEx }},
+                { stationArea: { $regex: searchTermRegEx }},
+                { stationName_en: { $regex: searchTermRegEx }},
+                { stationAddress_en: { $regex: searchTermRegEx }},
+                { stationArea_en: { $regex: searchTermRegEx }}
+            ]
+        });
+    }
+
+    if (locQuery) {
+        agg = agg.sort({ distanceFromPoint: 1 });
+    }
+
+    let stationResults = await agg.exec().catch((err) => {
+        console.log(err);
+        res.status(400).send({error_msg: 'Something happened on the server'});
+    });
+
+    res.send({stations: stationResults });
+});
+
 app.get('/stations/textsearch', async (req, res) => {
     const searchTerm = req.query.q;
-    const searchTermRegEx = new RegExp(searchTerm);
+    const searchTermRegEx = new RegExp(searchTerm, 'i');
 
     // Chinese search, for now use regex, but could look at using a more
     // complicated but performant full text chinese search like elasticsearch
     // later
     const stationSearch = await StationInfo.find({ $or: [
-        { stationName: { $regex: searchTermRegEx, $options: 'i' }},
-        { stationAddress: { $regex: searchTermRegEx, $options: 'i' }},
-        { stationArea: { $regex: searchTermRegEx, $options: 'i' }},
-    ]});
+        { stationName: { $regex: searchTermRegEx }},
+        { stationAddress: { $regex: searchTermRegEx }},
+        { stationArea: { $regex: searchTermRegEx }},
+    ]})
+    .catch(err => {
+        console.log(err);
+        res.status(400).send({error_msg: 'Something happened on the server'});
+    });
 
-    const stationSearchEn = await StationInfo.find({ $text: { $search: searchTerm }});
+    const stationSearchEn = await StationInfo.find({ $text: { $search: searchTerm }})
+    .catch(err => {
+        console.log(err);
+        res.status(400).send({error_msg: 'Something happened on the server'});
+    });
 
     // Combine both chinese and english search results and removes duplicates
     const allStations = [...new Set([...stationSearch, ...stationSearchEn])];
@@ -51,11 +111,15 @@ app.get('/stations/locsearch', async (req, res) => {
             $near: {
                 $geometry: {
                     type: 'Point',
-                    coordinates: [locParams[1], locParams[0]]
+                    coordinates: [parseFloat(locParams[1]), parseFloat(locParams[0])]
                 },
                 $maxDistance: 1000
             }
         }
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(400).send({error_msg: 'Something happened on the server'});
     });
 
     console.log(`Searched for: ${locQuery} and found ${stationSearchLoc.length} stations`);

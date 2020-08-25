@@ -81,7 +81,7 @@ stationInfoSchema.index({
     stationArea_en: 'text'
 });
 
-stationInfoSchema.index( { location : "2dsphere" } )
+stationInfoSchema.index( { "location" : "2dsphere" } )
 
 const StationInfo = mongoose.model('StationInfo', stationInfoSchema);
 
