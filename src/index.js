@@ -17,6 +17,73 @@ app.get('', (req, res) => {
     });
 });
 
+
+app.get('/stations/nearby', async (req, res) => {
+    const locQuery = req.query.loc;
+    console.log(`Location is: ${locQuery}`);
+    
+    if (!locQuery) {
+        res.status(400).send({error: 'Invalid request'});
+    }
+j
+    const locParams = locQuery.split(',');
+    
+    let agg = StationInfo.aggregate();
+
+    let nearbyMaxDist = 3000;
+    let maxTotalBikes = 30;
+    let maxEmptyBikes = 3;
+    let maxOccupiedBikes = 5;
+
+    agg = agg.near({
+        near: {
+            type: 'Point',
+            coordinates: [parseFloat(locParams[1]), parseFloat(locParams[0])]
+        },
+        distanceField: 'distanceFromPoint', // required
+        maxDistance: nearbyMaxDist,
+        query: {
+            active: 1
+        }
+    });
+
+    const distanceScore = {$divide: [{$subtract: [nearbyMaxDist, '$distanceFromPoint']}, nearbyMaxDist]};
+    const numTotalBikesScore = {$min: [{$divide: ['$numTotalBikeSpots', maxTotalBikes]}, 1]};
+    const numEmptyBikesScore = {$min: [{$divide: ['$numEmptyBikeSpots', maxEmptyBikes]}, 1]};
+    const numOccupiedBikesScore = {$min: [{$divide: ['$numOccupiedBikeSpots', maxOccupiedBikes]}, 1]};
+
+    // Uses each score to get a max out of 1 and then divides by 4. 
+    // Note: Some of these fields/score could be done during data update,
+    //  but did it at aggregation to keep flexibility
+    agg = agg.addFields({
+        nearbyScore: {
+            $round: [{
+                $divide: [{
+                    $add: [
+                        distanceScore,
+                        numTotalBikesScore,
+                        numEmptyBikesScore,
+                        numOccupiedBikesScore
+                    ]},
+                    4
+                ]
+            },
+            5
+        ]}
+    });
+
+    agg = agg.sort({
+        nearbyScore: -1
+    });
+
+    let stationResults = await agg.exec().catch((err) => {
+        console.log(err);
+        res.status(400).send({error_msg: 'Something happened on the server'});
+    });
+
+    res.send({ stations: stationResults });
+});
+
 app.get('/stations/search', async (req, res) => {
     const searchTerm = req.query.q;
     const locQuery = req.query.loc;
