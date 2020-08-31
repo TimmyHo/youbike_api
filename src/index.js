@@ -17,6 +17,17 @@ app.get('', (req, res) => {
     });
 });
 
+app.get('/stations', async (req, res) => {
+    try {
+        const allStations = await StationInfo.find({});
+
+        res.send(allStations);
+    }
+    catch (err) {
+        console.log(err);
+        res.status(400).send({error_msg: 'Something happened on the server'});
+    }
+})
 
 app.get('/stations/nearby', async (req, res) => {
     const locQuery = req.query.loc;
@@ -76,12 +87,14 @@ j
         nearbyScore: -1
     });
 
-    let stationResults = await agg.exec().catch((err) => {
+    try {
+        let stationResults = await agg.exec();
+        res.send({ stations: stationResults });
+    }
+    catch (err) {
         console.log(err);
         res.status(400).send({error_msg: 'Something happened on the server'});
-    });
-
-    res.send({ stations: stationResults });
+    }
 });
 
 app.get('/stations/search', async (req, res) => {
@@ -128,44 +141,45 @@ app.get('/stations/search', async (req, res) => {
         agg = agg.sort({ distanceFromPoint: 1 });
     }
 
-    let stationResults = await agg.exec().catch((err) => {
+    try {
+        let stationResults = await agg.exec();
+
+        res.send({stations: stationResults });
+    }
+    catch (err) {
         console.log(err);
         res.status(400).send({error_msg: 'Something happened on the server'});
-    });
-
-    res.send({stations: stationResults });
+    }
 });
 
 app.get('/stations/textsearch', async (req, res) => {
     const searchTerm = req.query.q;
     const searchTermRegEx = new RegExp(searchTerm, 'i');
 
-    // Chinese search, for now use regex, but could look at using a more
-    // complicated but performant full text chinese search like elasticsearch
-    // later
-    const stationSearch = await StationInfo.find({ $or: [
-        { stationName: { $regex: searchTermRegEx }},
-        { stationAddress: { $regex: searchTermRegEx }},
-        { stationArea: { $regex: searchTermRegEx }},
-    ]})
-    .catch(err => {
+    try {
+        // Chinese search, for now use regex, but could look at using a more
+        // complicated but performant full text chinese search like elasticsearch
+        // later
+        const stationSearch = await StationInfo.find({ $or: [
+            { stationName: { $regex: searchTermRegEx }},
+            { stationAddress: { $regex: searchTermRegEx }},
+            { stationArea: { $regex: searchTermRegEx }},
+        ]});
+
+        const stationSearchEn = await StationInfo.find({ $text: { $search: searchTerm }});
+
+        // Combine both chinese and english search results and removes duplicates
+        const combinedStations = [...new Set([...stationSearch, ...stationSearchEn])];
+
+        console.log(`Searched for: ${searchTerm} and found ${combinedStations.length} stations`);
+        res.send({
+            stations: combinedStations
+        });
+    }
+    catch (err) {
         console.log(err);
         res.status(400).send({error_msg: 'Something happened on the server'});
-    });
-
-    const stationSearchEn = await StationInfo.find({ $text: { $search: searchTerm }})
-    .catch(err => {
-        console.log(err);
-        res.status(400).send({error_msg: 'Something happened on the server'});
-    });
-
-    // Combine both chinese and english search results and removes duplicates
-    const allStations = [...new Set([...stationSearch, ...stationSearchEn])];
-
-    console.log(`Searched for: ${searchTerm} and found ${allStations.length} stations`);
-    res.send({
-        stations: allStations
-    });
+    }
 });
 
 
@@ -173,30 +187,34 @@ app.get('/stations/locsearch', async (req, res) => {
     const locQuery = req.query.loc;
     const locParams = locQuery.split(',');
 
-    const stationSearchLoc = await StationInfo.find({
-        location: { 
-            $near: {
-                $geometry: {
-                    type: 'Point',
-                    coordinates: [parseFloat(locParams[1]), parseFloat(locParams[0])]
-                },
-                $maxDistance: 1000
+    try {
+        const stationSearchLoc = await StationInfo.find({
+            location: { 
+                $near: {
+                    $geometry: {
+                        type: 'Point',
+                        coordinates: [parseFloat(locParams[1]), parseFloat(locParams[0])]
+                    },
+                    $maxDistance: 1000
+                }
             }
-        }
-    })
-    .catch(err => {
+        });
+
+        console.log(`Searched for: ${locQuery} and found ${stationSearchLoc.length} stations`);
+
+        res.send({
+            stations: stationSearchLoc
+        });
+    }
+    catch (err) {
         console.log(err);
         res.status(400).send({error_msg: 'Something happened on the server'});
-    });
-
-    console.log(`Searched for: ${locQuery} and found ${stationSearchLoc.length} stations`);
-
-    res.send({
-        stations: stationSearchLoc
-    });
+    }
 });
 
 
 app.listen(port,  () => {
     console.log('Server is up on port '+port);
 });
+
+module.exports = app;

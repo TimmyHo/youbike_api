@@ -1,10 +1,11 @@
 const fs = require('fs');
+const path = require('path');
 const db = require('../db/mongoose');
 const mongoose = require('mongoose');
 
 const StationInfo = require('../models/stationInfo');
 
-let jsonFilePath = 'YouBikeTP.json';
+let jsonFilePath = path.join(__dirname, 'YouBikeTP.json');
 //jsonFilePath = 'YouBikeTP-min.json';
 
 if (Object.keys(mongoose.connection.collections).includes('stationinfos')) {

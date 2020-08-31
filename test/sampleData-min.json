@@ -1,0 +1,74 @@
+[
+    {
+        "_id": "5f43fff8de20090d53d42298",
+        "stationId": "0009",
+        "location": {
+            "coordinates": [
+                121.57448,
+                25.031785
+            ],
+            "_id": "5f43fff8de20090d53d42299",
+            "type": "Point"
+        },
+        "stationName": "松德站",
+        "stationAddress": "台北市信義區松德路300號",
+        "stationArea": "信義區",
+        "stationName_en": "Songde",
+        "stationAddress_en": "No.300, Songde Rd.(32)",
+        "stationArea_en": "Xinyi Dist.",
+        "numTotalBikeSpots": 40,
+        "numEmptyBikeSpots": 12,
+        "numOccupiedBikeSpots": 28,
+        "lastUpdated": "20200821235044",
+        "active": 1,
+        "__v": 0
+    },
+    {
+        "_id": "5f43fff8de20090d53d42290",
+        "stationId": "0005",
+        "location": {
+            "coordinates": [
+                121.5686639,
+                25.0365638889
+            ],
+            "_id": "5f43fff8de20090d53d42291",
+            "type": "Point"
+        },
+        "stationName": "興雅國中",
+        "stationAddress": "松仁路/松仁路95巷(東南側)(鄰近信義商圈/台北信義威秀影城)",
+        "stationArea": "信義區",
+        "stationName_en": "Xingya Jr. High School",
+        "stationAddress_en": "The S.E. side of Road Songren & Ln. 95, Songren Rd..",
+        "stationArea_en": "Xinyi Dist.",
+        "numTotalBikeSpots": 60,
+        "numEmptyBikeSpots": 59,
+        "numOccupiedBikeSpots": 0,
+        "lastUpdated": "20200821235035",
+        "active": 1,
+        "__v": 0
+    },
+    {
+        "_id": "5f43fff8de20090d53d4228a",
+        "stationId": "0002",
+        "location": {
+            "coordinates": [
+                121.55742,
+                25.041254
+            ],
+            "_id": "5f43fff8de20090d53d4228b",
+            "type": "Point"
+        },
+        "stationName": "捷運國父紀念館站(2號出口)",
+        "stationAddress": "忠孝東路四段/光復南路口(西南側)",
+        "stationArea": "大安區",
+        "stationName_en": "MRT S.Y.S Memorial Hall Stataion(Exit 2.)",
+        "stationAddress_en": "Sec,4. Zhongxiao E.Rd/GuangFu S. Rd",
+        "stationArea_en": "Daan Dist.",
+        "numTotalBikeSpots": 48,
+        "numEmptyBikeSpots": 45,
+        "numOccupiedBikeSpots": 3,
+        "lastUpdated": "20200821235021",
+        "active": 1,
+        "__v": 0
+    }
+]
