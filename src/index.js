@@ -21,11 +21,11 @@ app.get('/stations', async (req, res) => {
     try {
         const allStations = await StationInfo.find({});
 
-        res.send(allStations);
+        res.send({stations: allStations, count: allStations.length });
     }
     catch (err) {
         console.log(err);
-        res.status(400).send({error_msg: 'Something happened on the server'});
+        res.status(500).send({error_msg: 'Something happened on the server'});
     }
 })
 
@@ -34,10 +34,20 @@ app.get('/stations/nearby', async (req, res) => {
     console.log(`Location is: ${locQuery}`);
     
     if (!locQuery) {
-        res.status(400).send({error: 'Invalid request'});
+        return res.status(400).send({error_msg: 'loc paramter must not be empty'});
     }
-j
+
     const locParams = locQuery.split(',');
+
+    if (locParams.length !== 2) {
+        return res.status(400).send({ error_msg: "loc parameter should be in latitude, longitude format '####,####'" });
+    }
+
+    const latitude = parseFloat(locParams[0]);
+    const longitude = parseFloat(locParams[1]);
+    if (isNaN(latitude) || isNaN(longitude)) {
+        return res.status(400).send({ error_msg: "loc parameters should be numbers (ie: '23.5,123.4')" });
+    }
     
     let agg = StationInfo.aggregate();
 
@@ -49,7 +59,7 @@ j
     agg = agg.near({
         near: {
             type: 'Point',
-            coordinates: [parseFloat(locParams[1]), parseFloat(locParams[0])]
+            coordinates: [longitude, latitude]
         },
         distanceField: 'distanceFromPoint', // required
         maxDistance: nearbyMaxDist,
@@ -89,17 +99,21 @@ j
 
     try {
         let stationResults = await agg.exec();
-        res.send({ stations: stationResults });
+        res.send({ stations: stationResults, count: stationResults.length });
     }
     catch (err) {
         console.log(err);
-        res.status(400).send({error_msg: 'Something happened on the server'});
+        res.status(500).send({error_msg: 'Something happened on the server'});
     }
 });
 
 app.get('/stations/search', async (req, res) => {
     const searchTerm = req.query.q;
     const locQuery = req.query.loc;
+
+    if (!searchTerm && !locQuery) {
+        return res.send({ stations: [], count: 0 });
+    }
 
     console.log(`Search term is: ${searchTerm} -- Location is: ${locQuery}`);
     let agg = StationInfo.aggregate();
@@ -108,11 +122,21 @@ app.get('/stations/search', async (req, res) => {
     // stations to the user (then it is the name/address of the you bike station)
     if (locQuery) {    
         const locParams = locQuery.split(',');
+
+        if (locParams.length !== 2) {
+            return res.status(400).send({ error_msg: "loc parameter should be in latitude, longitude format '####,####'" });
+        }
     
+        const latitude = parseFloat(locParams[0]);
+        const longitude = parseFloat(locParams[1]);
+        if (isNaN(latitude) || isNaN(longitude)) {
+            return res.status(400).send({ error_msg: "loc parameters should be numbers (ie: '23.5,123.4')" });
+        }
+
         agg = agg.near({
             near: {
                 type: 'Point',
-                coordinates: [parseFloat(locParams[1]), parseFloat(locParams[0])]
+                coordinates: [parseFloat(longitude), parseFloat(latitude)]
             },
             distanceField: 'distanceFromPoint', // required
             maxDistance: 1000
@@ -144,14 +168,16 @@ app.get('/stations/search', async (req, res) => {
     try {
         let stationResults = await agg.exec();
 
-        res.send({stations: stationResults });
+        res.send({ stations: stationResults, count: stationResults.length });
     }
     catch (err) {
         console.log(err);
-        res.status(400).send({error_msg: 'Something happened on the server'});
+        res.status(500).send({error_msg: 'Something happened on the server'});
     }
 });
 
+// Deprecated -- could return/redirect instead, but keep around for reference
+/*
 app.get('/stations/textsearch', async (req, res) => {
     const searchTerm = req.query.q;
     const searchTermRegEx = new RegExp(searchTerm, 'i');
@@ -178,7 +204,7 @@ app.get('/stations/textsearch', async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        res.status(400).send({error_msg: 'Something happened on the server'});
+        res.status(500).send({error_msg: 'Something happened on the server'});
     }
 });
 
@@ -208,10 +234,10 @@ app.get('/stations/locsearch', async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        res.status(400).send({error_msg: 'Something happened on the server'});
+        res.status(500).send({error_msg: 'Something happened on the server'});
     }
 });
-
+*/
 
 app.listen(port,  () => {
     console.log('Server is up on port '+port);
