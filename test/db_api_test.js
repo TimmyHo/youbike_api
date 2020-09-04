@@ -18,34 +18,34 @@ const expect = chai.expect;
 let mongoServer;
 
 before(async () => {
-    // Not the greatest but disconnect the actual connection, should refactor to have 
-    // connection uri and connect to db separated
-    if (mongoose.connection.readyState > 0) {
-        await mongoose.disconnect();
-    }
+    // // Not the greatest but disconnect the actual connection, should refactor to have 
+    // // connection uri and connect to db separated
+    // if (mongoose.connection.readyState > 0) {
+    //     await mongoose.disconnect();
+    // }
 
-    mongoServer = new MongoMemoryServer();
-    const mongoUri = await mongoServer.getUri();
-    await mongoose.connect(mongoUri, {
-        useNewUrlParser: true,
-        useCreateIndex: true,
-        useFindAndModify: false,
-        useUnifiedTopology: true
-    });
+    // mongoServer = new MongoMemoryServer();
+    // const mongoUri = await mongoServer.getUri();
+    // await mongoose.connect(mongoUri, {
+    //     useNewUrlParser: true,
+    //     useCreateIndex: true,
+    //     useFindAndModify: false,
+    //     useUnifiedTopology: true
+    // });
     
-    // Since this is a clean db, need to ensure the indexes are added
-    StationInfo.ensureIndexes();
+    // // Since this is a clean db, need to ensure the indexes are added
+    // StationInfo.ensureIndexes();
 
-    const jsonFilePath = path.join(__dirname, 'sampleData.json');
-    const contents = fs.readFileSync(jsonFilePath);
+    // const jsonFilePath = path.join(__dirname, 'sampleData.json');
+    // const contents = fs.readFileSync(jsonFilePath);
 
-    let jsonData = JSON.parse(contents);
-    await StationInfo.insertMany(jsonData);
+    // let jsonData = JSON.parse(contents);
+    // await StationInfo.insertMany(jsonData);
 });
 
 after(async () => {
-    await mongoose.disconnect();
-    await mongoServer.stop();
+    // await mongoose.disconnect();
+    // await mongoServer.stop();
 });
 
 describe('sanity checks', () => {
@@ -86,10 +86,8 @@ describe('REST api tests', () => {
 
         it('/stations/search -- only location', async () => {
             const data = await chai.request(app).get('/stations/search?loc=25.0242846,121.529252');
-            
             expect(data.body.count).equal(15);
         });
-
         
         it('/stations/search -- invalid location - no comma', async () => {
             const data = await chai.request(app).get('/stations/search?loc=123.32123');
@@ -104,11 +102,45 @@ describe('REST api tests', () => {
         it('/stations/search -- text and location search', async () => {
             // finds all places within 1000 m
             const data = await chai.request(app).get('/stations/search?q=guting&loc=25.0242846,121.529252');
-            
+            expect(data.body.count).equal(2);
+
             const stations = data.body.stations;
             stations.forEach(station => {
                 expect(station.distanceFromPoint).lessThan(1000);
             });
+        });
+    });
+
+    describe('/stations/nearby -- TESTS', () => {
+        it('/stations/nearby -- no parameters', async () => {
+            const data = await chai.request(app).get('/stations/nearby');
+            expect(data.status).equal(400);
+        });
+
+        it('/stations/search -- invalid location - no comma', async () => {
+            const data = await chai.request(app).get('/stations/nearby?loc=123.32123');
+            expect(data.status).equal(400);
+        });
+
+        it('/stations/search -- invalid location - not a number', async () => {
+            const data = await chai.request(app).get('/stations/nearby?loc=an,123');
+            expect(data.status).equal(400);
+        });
+
+        it('stations/nearby - find nearby chiang kai shek residence', async () => {
+            const data = await chai.request(app).get('/stations/nearby?loc=25.094189,121.5186994');
+            expect(data.body.count).equal(55);
+
+            const stations = data.body.stations;
+            // All scores should be less than or equal to 1
+            // nearby API currently searches for items within 3000;
+            let currScore = 1;
+            stations.forEach(station => {
+                expect(station.distanceFromPoint).lessThan(3000);
+                expect(station.nearbyScore).lte(currScore);
+                currScore = station.nearbyScore;
+            });
+        
         });
     });
 });
