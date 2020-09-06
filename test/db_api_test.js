@@ -66,6 +66,23 @@ describe('REST api tests', () => {
         });
     });
 
+    describe('/stations/list -- TESTS', () => {
+        it('/stations/list -- get defaults (20)', async () => {
+            const data = await chai.request(app).get('/stations/list');
+            expect(data.body.count).equal(20);
+        });
+
+        it('/stations/list -- invalid parameters', async () => {
+            const data = await chai.request(app).get('/stations/list?page=2&size=abc');
+            expect(data.status).equal(400);
+        });
+
+        it('/stations/list -- with parameters', async () => {
+            const data = await chai.request(app).get('/stations/list?page=10&size=30');
+            expect(data.body.count).equal(30);
+        });
+    });
+
     describe('/stations/search -- TESTS', () => {
         it('/stations/search -- no parameters', async () => {
             const data = await chai.request(app).get('/stations/search');

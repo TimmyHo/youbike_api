@@ -19,15 +19,47 @@ app.get('', (req, res) => {
 
 app.get('/stations', async (req, res) => {
     try {
-        const allStations = await StationInfo.find({});
+        const stationResults = await StationInfo.find({});
 
-        res.send({stations: allStations, count: allStations.length });
+        res.send({stations: stationResults, count: stationResults.length });
     }
     catch (err) {
         console.log(err);
         res.status(500).send({error_msg: 'Something happened on the server'});
     }
-})
+});
+
+app.get('/stations/list', async (req, res) => {
+    try {
+        let pageIndex = 0;
+        let pageSize = 20;
+
+        if (req.query.page || req.query.size) {
+            if (req.query.page) {
+                pageIndex = parseInt(req.query.page);
+            }
+
+            if (req.query.size) {
+                pageSize = parseInt(req.query.size);
+            }
+
+            if (isNaN(pageIndex) || isNaN(pageSize)) {
+                return res.status(400).send({ error_msg: "parameters should be integers (ie: '123')" });
+            }
+
+        }
+        const stationResults = await StationInfo.find({}).skip(pageIndex*pageSize).limit(pageSize);
+
+        res.send({ stations: stationResults, count: stationResults.length });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).send({error_msg: 'Something happened on the server'});
+    }
+});
+
+
+
 
 app.get('/stations/nearby', async (req, res) => {
     const locQuery = req.query.loc;
@@ -115,7 +147,6 @@ app.get('/stations/search', async (req, res) => {
         return res.send({ stations: [], count: 0 });
     }
 
-    console.log(`Search term is: ${searchTerm} -- Location is: ${locQuery}`);
     let agg = StationInfo.aggregate();
 
     // first search by location because use case is want to find the nearest youbike
