@@ -57,3 +57,4 @@ stations.forEach(async (station) => {
 });
 
 console.log(`Added ${stations.length} stations`);
+process.exit();
