@@ -1,7 +1,6 @@
 const express = require('express');
 
 const db = require('./db/mongoose');
-
 const StationInfo = require('./models/stationInfo');
 
 const app = express();
@@ -10,12 +9,12 @@ const port = process.env.PORT || 5000;
 
 app.use(express.urlencoded({extended: true}));
 
-app.get('', (req, res) => {
-    res.send({
-        title: 'Hello World',
-        name: 'Timmy Ho'
-    });
-});
+// app.get('', (req, res) => {
+//     res.send({
+//         title: 'Hello World',
+//         name: 'Timmy Ho'
+//     });
+// });
 
 app.get('/stations', async (req, res) => {
     try {
@@ -57,9 +56,6 @@ app.get('/stations/list', async (req, res) => {
         res.status(500).send({error_msg: 'Something happened on the server'});
     }
 });
-
-
-
 
 app.get('/stations/nearby', async (req, res) => {
     const locQuery = req.query.loc;

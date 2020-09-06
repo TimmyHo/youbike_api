@@ -18,34 +18,34 @@ const expect = chai.expect;
 let mongoServer;
 
 before(async () => {
-    // // Not the greatest but disconnect the actual connection, should refactor to have 
-    // // connection uri and connect to db separated
-    // if (mongoose.connection.readyState > 0) {
-    //     await mongoose.disconnect();
-    // }
+    // Not the greatest but disconnect the actual connection, should refactor to have 
+    // connection uri and connect to db separated
+    if (mongoose.connection.readyState > 0) {
+        await mongoose.disconnect();
+    }
 
-    // mongoServer = new MongoMemoryServer();
-    // const mongoUri = await mongoServer.getUri();
-    // await mongoose.connect(mongoUri, {
-    //     useNewUrlParser: true,
-    //     useCreateIndex: true,
-    //     useFindAndModify: false,
-    //     useUnifiedTopology: true
-    // });
+    mongoServer = new MongoMemoryServer();
+    const mongoUri = await mongoServer.getUri();
+    await mongoose.connect(mongoUri, {
+        useNewUrlParser: true,
+        useCreateIndex: true,
+        useFindAndModify: false,
+        useUnifiedTopology: true
+    });
     
-    // // Since this is a clean db, need to ensure the indexes are added
-    // StationInfo.ensureIndexes();
+    // Since this is a clean db, need to ensure the indexes are added
+    StationInfo.ensureIndexes();
 
-    // const jsonFilePath = path.join(__dirname, 'sampleData.json');
-    // const contents = fs.readFileSync(jsonFilePath);
+    const jsonFilePath = path.join(__dirname, 'sampleData.json');
+    const contents = fs.readFileSync(jsonFilePath);
 
-    // let jsonData = JSON.parse(contents);
-    // await StationInfo.insertMany(jsonData);
+    let jsonData = JSON.parse(contents);
+    await StationInfo.insertMany(jsonData);
 });
 
 after(async () => {
-    // await mongoose.disconnect();
-    // await mongoServer.stop();
+    await mongoose.disconnect();
+    await mongoServer.stop();
 });
 
 describe('sanity checks', () => {
@@ -157,7 +157,6 @@ describe('REST api tests', () => {
                 expect(station.nearbyScore).lte(currScore);
                 currScore = station.nearbyScore;
             });
-        
         });
     });
 });
