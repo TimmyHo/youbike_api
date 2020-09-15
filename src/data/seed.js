@@ -12,48 +12,46 @@ const contents = fs.readFileSync(jsonFilePath);
 let jsonObject = JSON.parse(contents);
 let stations = Object.values(jsonObject.retVal);
 
-async function deleteStations() {
+deleteStations = async () => {
     await StationInfo.deleteMany({});    
 }
 
-async function seedStations() {
-    stations.forEach(async (station) => {
-        const stationInfo = new StationInfo({
-            stationId: station.sno,
-            location: {
-                type: 'Point',
-                coordinates: [
-                    station.lng,
-                    station.lat
-                ]
-            },
+seedStations = async () => {
+    await Promise.all(
+        stations.map(async (station) => {
+            const stationInfo = new StationInfo({
+                stationId: station.sno,
+                location: {
+                    type: 'Point',
+                    coordinates: [
+                        station.lng,
+                        station.lat
+                    ]
+                },
 
-            stationName: station.sna,
-            stationAddress: station.ar,
-            stationArea: station.sarea,
+                stationName: station.sna,
+                stationAddress: station.ar,
+                stationArea: station.sarea,
 
-            stationName_en: station.snaen,
-            stationAddress_en: station.aren,
-            stationArea_en: station.sareaen,
+                stationName_en: station.snaen,
+                stationAddress_en: station.aren,
+                stationArea_en: station.sareaen,
 
-            numTotalBikeSpots: station.tot,
-            numEmptyBikeSpots: station.bemp,
-            numOccupiedBikeSpots: station.sbi,
+                numTotalBikeSpots: station.tot,
+                numEmptyBikeSpots: station.bemp,
+                numOccupiedBikeSpots: station.sbi,
 
-            lastUpdated: station.mday,
-            active: station.act,
-        });
+                lastUpdated: station.mday,
+                active: station.act,
+            });
 
-        // console.log(stationInfo);
+            // console.log(stationInfo);
 
-        await stationInfo.save((err, stn) => {
-            if (err) {
-                console.log(station)
-            }
+            await stationInfo.save();
 
-            // console.log(stn);
-        });
-    });
+            console.log(`Saving Station #${stationInfo.stationId}`);
+        })
+    );
 }
 
 deleteStations().then(async () => {
