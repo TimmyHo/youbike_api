@@ -7,15 +7,18 @@ const dataFolder = '/var/lib/youbike/data';
 //     fs.mkdirSync(dataFolder, { recursive: true });
 // }
 
+console.log('starting');
 
 let jsonFilePath = path.join(dataFolder, 'currData.json',);
 
 let currDate = new Date().toISOString();
-let timestampFilePath = path.join(dataFolder, `${currDate}.json`);
+
+let timestampBackupFilePath = path.join(dataFolder, `youbike-data--${currDate}.json`);
+
 const file = fs.createWriteStream(jsonFilePath);
-const backupFile = fs.createWriteStream(timestampFilePath);
 
 const request = https.get("https://tcgbusfs.blob.core.windows.net/blobyoubike/YouBikeTP.json", (response)  => {
   response.pipe(file);
-  // response.pipe(backupFile)
+
+  fs.copyFileSync(jsonFilePath, timestampBackupFilePath);
 });

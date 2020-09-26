@@ -1,0 +1,1 @@
+* * * * * /youbike/run.sh >> /var/log/youbike/run-worker.log 2>&1
