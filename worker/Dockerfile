@@ -26,3 +26,11 @@ RUN npm install
 COPY . .
 
 ENTRYPOINT ["/youbike-worker/start.sh"]
+
+# Build image and create/run container  locally:
+# docker build -t youbike-worker .
+# docker run --env-file .env youbike-worker
+
+# To go into docker container:
+# docker ps (get container_id)
+# docker exec -it (container_id) bash
