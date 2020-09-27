@@ -1,1 +1,3 @@
-* * * * * /youbike/run.sh >> /var/log/youbike/run-worker.log 2>&1
+PATH=/usr/local/bin:/usr/bin:/bin
+
+* * * * * /youbike-worker/run.sh >> /var/log/youbike-worker/run-worker.log 2>&1

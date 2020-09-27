@@ -1,10 +1,10 @@
 #!/bin/sh
 
-cd /youbike
+cd /youbike-worker
 
-echo '[START] Get and Store Data'
+echo "[$(date)][START] Get and Store Data "
 
-/usr/local/bin/node src/pullData
-/usr/local/bin/node src/seedData
+node src/pullData
+node src/seedData
 
-echo '[END] Get and Store Data'
+echo "[$(date)][END] Get and Store Data\n"

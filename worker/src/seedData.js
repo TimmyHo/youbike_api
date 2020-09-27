@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 
 const StationInfo = require('./models/stationInfo');
 
-const dataFolder = '/var/lib/youbike/data';
+let dataFolder = process.env.YOUBIKE_DATA_DIR || '/tmp';
 
 let jsonFilePath = path.join(dataFolder, 'currData.json');
 
@@ -50,15 +50,19 @@ seedStations = async () => {
 
             await stationInfo.save();
 
-            console.log(`Saving Station #${stationInfo.stationId}`);
+            //console.log(`Saving Station #${stationInfo.stationId}`);
         })
     );
 }
 
-deleteStations().then(async () => {
+runScript = async () => {
+    await deleteStations();
     console.log('Deleted all stations');
+
     await seedStations();
-}).then(() => {
     console.log(`Added ${stations.length} stations`);
-    process.exit(); 
+}
+
+runScript().then(() => {
+    process.exit();
 });
