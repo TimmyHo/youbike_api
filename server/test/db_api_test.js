@@ -6,7 +6,7 @@ const path = require('path');
 
 
 const mongoose = require('mongoose');
-const { MongoMemoryServer } = require('mongodb-memory-server');
+const { MongoMemoryServer } = require('mongodb-memory-server-global-4.2');
 
 const StationInfo = require('../src/models/stationInfo.js');
 const app = require('../src/index.js');
