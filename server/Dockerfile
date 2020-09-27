@@ -19,7 +19,7 @@ COPY . .
 
 EXPOSE 5000
 
-ENTRYPOINT ["npm", "run", "start"]
+CMD ["npm", "run", "start"]
 
 # Build image and create/run container locally:
 # docker build -t youbike-server .

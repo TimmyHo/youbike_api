@@ -25,7 +25,7 @@ RUN crontab /etc/cron.d/worker-cron
 RUN npm install
 COPY . .
 
-ENTRYPOINT ["/youbike-worker/start.sh"]
+CMD ["/youbike-worker/start.sh"]
 
 # Build image and create/run container  locally:
 # docker build -t youbike-worker .

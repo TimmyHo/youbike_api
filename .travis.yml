@@ -1,0 +1,21 @@
+sudo: required
+language: generic
+
+services:
+  - docker
+
+before_install:
+  - docker build -t codefortim/server-test -f ./server/Dockerfile ./server
+
+script:
+  - docker run codefortim/server-test npm run test
+
+after_success:
+  - docker build -t codefortim/youbike-server ./server
+  - docker build -t codefortim/youbike-worker ./worker
+
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push codefortim/youbike-server
+  - docker push codefortim/youbike-worker
