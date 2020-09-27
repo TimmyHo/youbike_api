@@ -4,6 +4,9 @@ language: generic
 services:
   - docker
 
+env:
+  - NODE_ENV=test
+  
 before_install:
   - docker build -t codefortim/server-test -f ./server/Dockerfile ./server
 
