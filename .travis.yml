@@ -4,14 +4,11 @@ language: generic
 services:
   - docker
 
-env:
-  - NODE_ENV=test
-  
 before_install:
   - docker build -t codefortim/server-test -f ./server/Dockerfile ./server
 
 script:
-  - docker run codefortim/server-test npm run test
+  - docker run -e NODE_ENV=test codefortim/server-test npm run test
 
 after_success:
   - docker build -t codefortim/youbike-server ./server
