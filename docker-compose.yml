@@ -1,0 +1,19 @@
+version: "3"
+services:
+  api:
+    build:
+      dockerfile: Dockerfile
+      context: ./server
+    environment:
+      - MONGODB_URL
+    ports:
+      - "80:5000"
+  worker:
+    build:
+      dockerfile: Dockerfile
+      context: ./worker
+    environment:
+      - MONGODB_URL
+
+  # docker-compose --env-file .env build
+  # docker-compose --env-file .env up
