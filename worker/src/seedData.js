@@ -13,6 +13,10 @@ const contents = fs.readFileSync(jsonFilePath);
 let jsonObject = JSON.parse(contents);
 let stations = Object.values(jsonObject.retVal);
 
+// Should actually just update each station instead of deleting
+// and re-adding them (since a server api call could occur during 
+// seedData which would return weird/incorrect results).
+
 deleteStations = async () => {
     await StationInfo.deleteMany({});    
 }

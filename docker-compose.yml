@@ -6,6 +6,9 @@ services:
       context: ./server
     environment:
       - MONGODB_URL
+    volumes:
+      - /youbike-server/node_modules
+      - ./server:/youbike-server
     ports:
       - "80:5000"
   worker:
@@ -14,6 +17,8 @@ services:
       context: ./worker
     environment:
       - MONGODB_URL
+    volumes:
+      - ./worker:/youbike-worker
 
   # docker-compose --env-file .env build
   # docker-compose --env-file .env up
