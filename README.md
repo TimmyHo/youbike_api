@@ -1,13 +1,24 @@
 # Taipei City Youbike API 
-This is a backend NodeJS/Express server serving up various APIs to access the Youbike data of Taipei, Taiwan.
+Demo: http://youbike-server.made-by-tim.com
+
+This project allows users to query Youbike data for Taipei. It contains 2 projects: 1 worker project, which pulls data from a link and puts it into the DB periodically; and 1 server project, which is backend NodeJS/Express server serving up various APIs to access the Youbike data of Taipei, Taiwan.
+
+![Youbike Architecture](docs/images/youbike-arch.png)
 
 ## Motivation
-This project was to help me learn how to create an API backend using NodeJS/Express and MongoDB and adding tests. The data comes from Taiwan's Open Data API. 
+This project was to help me learn how to create an API backend using NodeJS/Express and MongoDB and adding tests. The data comes from Taiwan's Open Data API. Also wanted to add a worker and deploy it 
+to a cloud provider to make it more realistic and complete.
 
 ## Tech/Framework Used
 * Node.js
 * Express.js
-* MongoDB (local instance)
+* MongoDB
+
+## Infrastructure Used
+* Travis CI
+* Docker
+
+(Currently deployed using docker images on Google Cloud Run)
 
 ## Usage
 
@@ -21,9 +32,10 @@ This API server is meant to be used by a FE application (Postman can be used to 
 |/stations/nearby|GET|loc|returns a list of highest ranked youbike stations closest to **loc**|
 
 ## (Possible) Features
+- Better data update/reliability
+- API Stats/Info collection through express middleware 
+
 - API Authorization (developer portal/API to apply for developer token/secret; attach it to header)
 - Web UI Front-End (simple FE app with google map)
 
-- Add a worker to pull in data from Youbike and update MongoDB
-- Docker-ize
-- Add to CI/CD pipeline
+- Add to CD pipeline
