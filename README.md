@@ -1,9 +1,9 @@
 # Taipei City Youbike API 
-Demo: http://youbike-server.made-by-tim.com
+**DEMO:** http://youbike-server.made-by-tim.com
 
 This project allows users to query Youbike data for Taipei. It contains 2 projects: 1 worker project, which pulls data from a link and puts it into the DB periodically; and 1 server project, which is backend NodeJS/Express server serving up various APIs to access the Youbike data of Taipei, Taiwan.
 
-![Youbike Architecture](docs/images/youbike-arch.png)
+![Youbike Backend Architecture](docs/images/youbike-arch.png)
 
 ## Motivation
 This project was to help me learn how to create an API backend using NodeJS/Express and MongoDB and adding tests. The data comes from Taiwan's Open Data API. Also wanted to add a worker and deploy it 
