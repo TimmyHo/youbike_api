@@ -1,7 +1,10 @@
 const fs = require('fs');
 const path = require('path');
-const db = require('./db/mongoose');
+
+const moment = require('moment');
+
 const mongoose = require('mongoose');
+const db = require('./db/mongoose');
 
 const StationInfo = require('./models/stationInfo');
 
@@ -46,7 +49,7 @@ seedStations = async () => {
                 numEmptyBikeSpots: station.bemp,
                 numOccupiedBikeSpots: station.sbi,
 
-                lastUpdated: station.mday,
+                lastUpdatedDate: moment(station.mday, "YYYYMMDDHHmmss"),
                 active: station.act,
             });
 

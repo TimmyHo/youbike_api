@@ -59,8 +59,8 @@ const stationInfoSchema = new mongoose.Schema({
         required: true
     },
     
-    lastUpdated: {
-        type: String,
+    lastUpdatedDate: {
+        type: Date,
         required: true
     },
     active: {

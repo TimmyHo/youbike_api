@@ -63,6 +63,10 @@ const stationInfoSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    lastUpdatedDate: {
+        type: Date,
+        required: true
+    },
     active: {
         type: Number,
         required: true
