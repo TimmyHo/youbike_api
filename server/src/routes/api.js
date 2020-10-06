@@ -1,21 +1,11 @@
 const express = require('express');
 
-const db = require('./db/mongoose');
-const StationInfo = require('./models/stationInfo');
+const db = require('../db/mongoose');
+const StationInfo = require('../models/stationInfo');
 
-const app = express();
+const router = express.Router();
 
-const port = process.env.PORT || 5000;
-
-app.use(express.urlencoded({extended: true}));
-
-app.get('', (req, res) => {
-    res.send({
-        title: 'Youbike API Server'
-    });
-});
-
-app.get('/stations', async (req, res) => {
+router.get('/stations', async (req, res) => {
     try {
         const stationResults = await StationInfo.find({});
 
@@ -27,7 +17,7 @@ app.get('/stations', async (req, res) => {
     }
 });
 
-app.get('/stations/list', async (req, res) => {
+router.get('/stations/list', async (req, res) => {
     try {
         let pageIndex = 0;
         let pageSize = 20;
@@ -56,7 +46,7 @@ app.get('/stations/list', async (req, res) => {
     }
 });
 
-app.get('/stations/nearby', async (req, res) => {
+router.get('/stations/nearby', async (req, res) => {
     const locQuery = req.query.loc;
     console.log(`Location is: ${locQuery}`);
     
@@ -134,7 +124,7 @@ app.get('/stations/nearby', async (req, res) => {
     }
 });
 
-app.get('/stations/search', async (req, res) => {
+router.get('/stations/search', async (req, res) => {
     const searchTerm = req.query.q;
     const locQuery = req.query.loc;
 
@@ -265,8 +255,4 @@ app.get('/stations/locsearch', async (req, res) => {
 });
 */
 
-app.listen(port,  () => {
-    console.log('Server is up on port '+port);
-});
-
-module.exports = app;
+module.exports = router;
