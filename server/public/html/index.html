@@ -7,8 +7,10 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
        
     <link rel="stylesheet" href="css/styles.css"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.6/handlebars.min.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.6/handlebars.min.js"></script>
+    
     <script id="station-template" type="text/x-handlebars-template">
         <p>
             <strong>【站號】 #{{stationId}}</strong><br>
@@ -20,6 +22,18 @@
             <strong>[Address]</strong> {{stationAddress_en}}<br>
             <strong>[Area]</strong> {{stationArea_en}}<br><br>
         </p>
+    </script>
+
+    <script id="station-info-window-template" type="text/x-handlebars-template">
+        <div>
+            <strong>【Name】</strong>{{stationName_en}}<br>
+            <strong>【站名】</strong>{{stationName}}<br><br>
+            
+            <strong>Empty Youbike Spots: </strong> {{numEmptyBikeSpots}}<br>
+            <strong>Occupied Youbike Spots: </strong> {{numOccupiedBikeSpots}}<br><br>
+            
+            <strong>Last Updated: </strong> {{ timeFromNow lastUpdatedDate }}
+        </div>
     </script>
       
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>

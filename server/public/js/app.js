@@ -8,14 +8,24 @@ initMap = () => {
     });
 }
 
+let activeInfoWindow = null;
+
 const searchTextInput = document.querySelector('#searchTextInput');
 const searchTextButton = document.querySelector('#searchTextButton');
 
 const searchNearbyButton = document.querySelector('#searchNearbyButton');
 const infoText = document.querySelector('#infoText');
 
-const stationSource = document.getElementById("station-template").innerHTML;
+const stationSource = document.getElementById('station-template').innerHTML;
 const stationTemplate = Handlebars.compile(stationSource);
+
+const stationInfoWindowSource = document.getElementById('station-info-window-template').innerHTML;
+const stationInfoWindowTemplate = Handlebars.compile(stationInfoWindowSource);
+
+
+Handlebars.registerHelper('timeFromNow', function (date) {
+    return moment(date).fromNow()
+})
 
 searchTextButton.addEventListener('click', (e) => {
     searchText = searchTextInput.value
@@ -88,13 +98,30 @@ searchNearbyButton.addEventListener('click', (e) => {
 
 generateMapMarkers = (stations) => {
     stations.forEach(station => {
-        let coords = {lat: parseFloat(station.location.coordinates[1]), lng: parseFloat(station.location.coordinates[0]) }
+        let coords = {
+            lat: parseFloat(station.location.coordinates[1]), 
+            lng: parseFloat(station.location.coordinates[0]) 
+        }
         
         console.log(station);
         const marker = new google.maps.Marker({
             position: coords,
-            title: "Hello World!",
-          });
+            title: station.stationName_en,
+            icon: "img/youbike_marker.png"
+        });
+
+        const infoWindow = new google.maps.InfoWindow({
+            content: stationInfoWindowTemplate(station),
+        });
+
+        marker.addListener("click", () => {
+            if (activeInfoWindow !== null) {
+                activeInfoWindow.close();
+            }
+
+            activeInfoWindow = infoWindow;
+            activeInfoWindow.open(googleMap, marker);
+        });
 
         marker.setMap(googleMap)
     });
