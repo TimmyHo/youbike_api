@@ -13,15 +13,24 @@
       <strong>【站號】 #{{stationId}}</strong><br>
       <strong>【站名】</strong>{{stationName}}<br>
       <strong>【地址】</strong>{{stationAddress}}<br>
-      <strong>【地區】</strong>{{stationArea}}
+      <strong>【地區】</strong>{{stationArea}}<br><br>
+      
+      <strong>[Station Name]</strong> {{stationName_en}}<br>
+      <strong>[Address]</strong> {{stationAddress_en}}<br>
+      <strong>[Area]</strong> {{stationArea_en}}<br><br>
     </p>
   </script>
     <h1>Youbike Station Finder (Taipei)</h1>
-    <svg width="400" height="180">
-  <rect x="50" y="20" width="150" height="150"
+    <svg width="150" height="150">
+  <rect x="0" y="0" width="150" height="150"
   style="fill:blue;stroke:pink;stroke-width:5;fill-opacity:0.1;stroke-opacity:0.9" />
 </svg>
-<button id="searchButton">Search</button>
+<div>
+<input id="searchTextInput"/><br>
+<button id="searchTextButton">Search by Station Name</button><br><br>
+</div>
+
+<button id="searchNearbyButton">Search Nearby</button>
 <div id="infoText"></div>
 
 
