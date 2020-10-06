@@ -1,3 +1,12 @@
+let googleMap;
+
+initMap = () => {
+  googleMap = new google.maps.Map(document.getElementById("map"), {
+    center: { lat: 25.0376898, lng: 121.5269211 },
+    zoom: 14,
+  });
+}
+
 const searchTextInput = document.querySelector('#searchTextInput');
 const searchTextButton = document.querySelector('#searchTextButton');
 
@@ -21,6 +30,32 @@ searchTextButton.addEventListener('click', (e) => {
             
             // infoText.innerHTML = JSON.stringify(data.stations);
             // console.log(data.stations);
+        });
+    });
+})
+
+
+searchMapButton.addEventListener('click', (e) => {
+    const mapCenter = googleMap.getCenter();
+
+    const coords = {
+        latitude: mapCenter.lat(),
+        longitude: mapCenter.lng()
+    }
+    console.log(coords);
+
+    const url = `/api/stations/nearby?loc=${coords.latitude},${coords.longitude}`
+    console.log(url);
+    fetch(url).then(response => {
+        response.json().then((data) => {
+            infoText.innerHTML = ''
+            data.stations.forEach(station => {
+                // console.log(station)
+                infoText.insertAdjacentHTML('beforeend', stationTemplate(station))
+            });
+            
+            // infoText.innerHTML = JSON.stringify(data.stations);
+                console.log(data.stations);
         });
     });
 })
