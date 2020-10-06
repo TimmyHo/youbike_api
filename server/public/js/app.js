@@ -1,10 +1,11 @@
 let googleMap;
 
 initMap = () => {
-  googleMap = new google.maps.Map(document.getElementById("map"), {
-    center: { lat: 25.0376898, lng: 121.5269211 },
-    zoom: 14,
-  });
+    const mapCenter = { lat: 25.0376898, lng: 121.5269211 }
+    googleMap = new google.maps.Map(document.getElementById("map"), {
+        center: mapCenter,
+        zoom: 14,
+    });
 }
 
 const searchTextInput = document.querySelector('#searchTextInput');
@@ -23,6 +24,8 @@ searchTextButton.addEventListener('click', (e) => {
     fetch(url).then(response => {
         response.json().then((data) => {
             infoText.innerHTML = ''
+            
+            generateMapMarkers(data.stations);
             data.stations.forEach(station => {
                 // console.log(station)
                 infoText.insertAdjacentHTML('beforeend', stationTemplate(station));
@@ -54,6 +57,7 @@ searchMapButton.addEventListener('click', (e) => {
                 infoText.insertAdjacentHTML('beforeend', stationTemplate(station))
             });
             
+            generateMapMarkers(data.stations);
             // infoText.innerHTML = JSON.stringify(data.stations);
                 console.log(data.stations);
         });
@@ -80,3 +84,20 @@ searchNearbyButton.addEventListener('click', (e) => {
         });
     })
 })
+
+
+generateMapMarkers = (stations) => {
+    stations.forEach(station => {
+        let coords = {lat: parseFloat(station.location.coordinates[1]), lng: parseFloat(station.location.coordinates[0]) }
+        
+        console.log(station);
+        const marker = new google.maps.Marker({
+            position: coords,
+            title: "Hello World!",
+          });
+
+        marker.setMap(googleMap)
+    });
+
+    
+}
