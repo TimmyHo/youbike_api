@@ -1,15 +1,16 @@
-# Taipei City Youbike API 
+# Taipei City YouBike API 
 **DEMO:** http://youbike-server.made-by-tim.com
+![YouBike UI](docs/images/youbike_ui.png)
 
-This project allows users to query Youbike data for Taipei. It contains 2 projects: 1 worker project, which pulls data from a link and puts it into the DB periodically; and 1 server project, which is backend NodeJS/Express server serving up various APIs to access the Youbike data of Taipei, Taiwan.
+This project displays YouBike Stations on a Google Map by querying a backend containing YouBike data for Taipei. It contains 2 projects: 1 server project, which contains both a single HTML/CSS/JS UI using a Google Map as well as  backend NodeJS/Express api server serving up various APIs to access the YouBike data of Taipei, Taiwan, and 1 worker project, which pulls data from a link and puts it into the DB periodically.
 
-![Youbike Backend Architecture](docs/images/youbike-arch.png)
+![YouBike Backend Architecture](docs/images/youbike-arch.png)
 
 ## Motivation
-This project was to help me learn how to create an API backend using NodeJS/Express and MongoDB and adding tests. The data comes from Taiwan's Open Data API. Also wanted to add a worker and deploy it 
-to a cloud provider to make it more realistic and complete.
+This project was to help me learn how to create an API backend using NodeJS/Express and MongoDB and adding tests. The Google Maps UI was to create a client that consumed these APIs and display them in an easy-to-understand way. The data comes from Taiwan's Open Data API. Also wanted to add a worker and deploy it to a cloud provider (Google) to make it more realistic and complete.
 
 ## Tech/Framework Used
+* HTML/CSS/JS (Bootstrap, Handlebars)
 * Node.js
 * Express.js
 * MongoDB
@@ -22,20 +23,19 @@ to a cloud provider to make it more realistic and complete.
 
 ## Usage
 
-This API server is meant to be used by a FE application (Postman can be used to test it out) and has the following endpoints:
+This API (Postman can be used to test it out) has the following endpoints:
 
 |Endpoint|Method|Params|Response|
 |:---|:---|:---|:---|
-|/stations|GET|none|returns all youbike stations in Taipei|
-|/stations/list|GET|page, size|returns a paginated (page # **page** with **size** results)|
-|/stations/search|GET|q, loc|searches for stations with text of "**q**" (english or chinese) and are close by **loc** |
-|/stations/nearby|GET|loc|returns a list of highest ranked youbike stations closest to **loc**|
+|/api/stations|GET|none|returns all youbike stations in Taipei|
+|/api/stations/list|GET|page, size|returns a paginated (page # **page** with **size** results)|
+|/api/stations/search|GET|q, loc|searches for stations with text of "**q**" (english or chinese) and are close by **loc** |
+|/api/stations/nearby|GET|loc|returns a list of highest ranked youbike stations closest to **loc**|
 
 ## (Possible) Features
 - Better data update/reliability
 - API Stats/Info collection through express middleware 
 
 - API Authorization (developer portal/API to apply for developer token/secret; attach it to header)
-- Web UI Front-End (simple FE app with google map)
 
 - Add to CD pipeline
