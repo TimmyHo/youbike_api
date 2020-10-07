@@ -3,36 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Youbike Station Finder</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-       
+    
+    <link rel="shortcut icon" href="img/ubike.ico">
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css"/>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.0/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.6/handlebars.min.js"></script>
     
     <script id="station-template" type="text/x-handlebars-template">
-        <p>
-            <strong>【站號】 #{{stationId}}</strong><br>
-            <strong>【站名】</strong>{{stationName}}<br>
-            <strong>【地址】</strong>{{stationAddress}}<br>
-            <strong>【地區】</strong>{{stationArea}}<br><br>
-            
-            <strong>[Station Name]</strong> {{stationName_en}}<br>
-            <strong>[Address]</strong> {{stationAddress_en}}<br>
-            <strong>[Area]</strong> {{stationArea_en}}<br><br>
-        </p>
+        <div class="card my-2 stationCard ">
+            <div class="card-header p-2 d-flex">
+                <div class="flex-shrink-1">
+                    <img src="{{ getCardMarkerImage isActive numTotalBikeSpots numOccupiedBikeSpots numEmptyBikeSpots }}"/>
+                </div>
+                <div class="flex-grow-1 mx-1">
+
+                    #{{stationId}} {{stationName_en}}<br>
+                    (#{{stationId}} {{stationName}})
+                </div>
+            </div>
+        <div class="card-body p-2">
+            <strong>Total Youbike Spots: </strong> {{numTotalBikeSpots}}<br>
+            <strong>Empty Youbike Spots: </strong> {{numEmptyBikeSpots}}<br>
+            <strong>Occupied Youbike Spots: </strong> {{numOccupiedBikeSpots}}<br>
+            <button>Directions</button>
+        </div>
+        </div>
     </script>
 
     <script id="station-info-window-template" type="text/x-handlebars-template">
         <div>
-            <strong>【Name】</strong>{{stationName_en}}<br>
-            <strong>【站名】</strong>{{stationName}}<br><br>
+            <strong>【Name】</strong>#{{stationId}} {{stationName_en}}<br>
+            <strong>【站名】</strong>#{{stationId}} {{stationName}}<br><br>
             
+            <strong>Total Youbike Spots: </strong> {{numTotalBikeSpots}}<br>
             <strong>Empty Youbike Spots: </strong> {{numEmptyBikeSpots}}<br>
             <strong>Occupied Youbike Spots: </strong> {{numOccupiedBikeSpots}}<br><br>
             
-            <strong>Last Updated: </strong> {{ timeFromNow lastUpdatedDate }}
+            <strong>Last Updated: </strong> {{ timeFromNow lastUpdatedDate }}<br>
+            <button>Directions</button>
         </div>
     </script>
       
@@ -43,22 +57,45 @@
     ></script>
 </head>
 <body>
-    <div class="text-center h1">
-        Youbike Station Finder (Taipei)
-    </div>
-
+    
     <div class="container-fluid">
+        <div class="text-center h1">
+            Youbike Station Finder (Taipei)
+        </div>
+
         <div class="row">
-            <div id="map" class="col-8"></div>
-            <div id="infoText" class="col-4 overflow-auto"></div>
-            
-            <div class="col-12">
-                <input id="searchTextInput" value="古亭"/><br>
-                <button id="searchTextButton">Search by Station Name</button><br><br>
+            <div class="col-8 mapContainer">
+                <div id="map"></div>
+                <div class="d-flex my-1">
+                    <div class="mx-2">
+                        <img src="img/icon_nomo.png" /> Operational
+                    </div>
+                    <div class="mx-2">
+                        <img src="img/icon_nobike.png" /> No Bikes
+                    </div>
+                    <div class="mx-2">
+                        <img src="img/icon_full.png" /> Full
+                    </div>
+                    <div class="mx-2">
+                        <img src="img/icon_service.png" />Out of Service
+                    </div>
+                    
+                    <div class="m-auto">
+                        <button id="refreshButton">Refresh Map</button>
+                    </div>
+                </div>
             </div>
-            <div class="col-12">
-                <button id="searchMapButton">Search Map</button>
-                <button id="searchNearbyButton">Search Nearby</button>
+            <div class="col-4 infoContainer">
+                <div class="d-flex">
+                    <input id="searchTextInput" class="w-100" placeholder="Search by Name"/>
+                    <button id="searchTextButton" class="ml-2 flex-shrink-1"><i class="fas fa-search"></i></button>                
+
+                </div>
+                <div id="infoText" class="overflow-auto"></div>
+            </div>
+
+            <div class="fixed-bottom text-center m-2 aboutFooter">
+                Made by Tim Hsiung (<a href="http://www.made-by-tim.com">www.made-by-tim.com</a>)
             </div>
         </div>
     </div>
