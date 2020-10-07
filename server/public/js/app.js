@@ -1,4 +1,6 @@
 let googleMap;
+let mapMarkers;
+
 
 initMap = () => {
     const mapCenter = { lat: 25.0376898, lng: 121.5269211 }
@@ -6,6 +8,7 @@ initMap = () => {
         center: mapCenter,
         zoom: 14,
     });
+    mapMarkers = [];
 
     refreshMap();
 }
@@ -32,31 +35,56 @@ Handlebars.registerHelper('getCardMarkerImage', (isActive, numTotalBikeSpots, nu
     return getMarkerImage({isActive, numTotalBikeSpots, numOccupiedBikeSpots, numEmptyBikeSpots})
 })
 
+Handlebars.registerHelper('roundNumber', (value, numDigits) => {
+    let roundedVal =  Math.round(value * Math.pow(10, numDigits)) / Math.pow(10, numDigits)
+    return roundedVal;
+})
+
+searchTextInput.addEventListener('keypress', (e) => {
+    if (e.which === 13) {
+        searchByTextInput();
+    }
+})
+
 searchTextButton.addEventListener('click', (e) => {
+    searchByTextInput();
+})
+
+searchByTextInput = () => {
     searchText = searchTextInput.value
     const url = `/api/stations/search?q=${searchText}`
+    console.log(url);
 
     fetch(url).then(response => {
         response.json().then((data) => {
-            infoText.innerHTML = ''
-            
-            generateMapMarkers(data.stations);
-            data.stations.forEach(station => {
-                // console.log(station)
-                infoText.insertAdjacentHTML('beforeend', stationTemplate(station));
-            });
-            
-            // infoText.innerHTML = JSON.stringify(data.stations);
-            // console.log(data.stations);
+            updateUI(data.stations)
         });
     });
-})
+}
+
+refreshMap = () => {
+    const mapCenter = googleMap.getCenter();
+
+    const coords = {
+        latitude: mapCenter.lat(),
+        longitude: mapCenter.lng()
+    }
+
+    const url = `/api/stations/nearby?loc=${coords.latitude},${coords.longitude}`
+    console.log(url);
+
+    fetch(url).then(response => {
+        response.json().then((data) => {
+            updateUI(data.stations);
+        });
+    });
+}
+
 
 
 refreshButton.addEventListener('click', (e) => {
     refreshMap();
 })
-
 
 // const searchNearbyButton = document.querySelector('#searchNearbyButton');
 // searchNearbyButton.addEventListener('click', (e) => {
@@ -80,6 +108,31 @@ refreshButton.addEventListener('click', (e) => {
 //     })
 // })
 
+updateUI = (stations) => {
+    updateInfoText(stations);
+    updateMap(stations);
+}
+
+updateInfoText = (stations) => {
+    infoText.innerHTML = ''
+    
+    stations.forEach(station => {
+        // console.log(station)
+        infoText.insertAdjacentHTML('beforeend', stationTemplate(station));
+    });
+}
+
+updateMap = (stations) => {
+    clearMapMarkers();
+    generateMapMarkers(stations);
+}
+
+clearMapMarkers = () => {
+    mapMarkers.forEach(mapMarker => {
+        mapMarker.setMap(null);
+    })
+    mapMarkers = [];
+}
 
 getMarkerImage = (station) => {
     let imageUrl = 'img/icon_nomo.png'
@@ -122,32 +175,8 @@ generateMapMarkers = (stations) => {
             activeInfoWindow.open(googleMap, marker);
         });
 
+        mapMarkers.push(marker)
+
         marker.setMap(googleMap)
-    });
-}
-
-refreshMap = () => {
-    const mapCenter = googleMap.getCenter();
-
-    const coords = {
-        latitude: mapCenter.lat(),
-        longitude: mapCenter.lng()
-    }
-    console.log(coords);
-
-    const url = `/api/stations/nearby?loc=${coords.latitude},${coords.longitude}`
-    console.log(url);
-    fetch(url).then(response => {
-        response.json().then((data) => {
-            infoText.innerHTML = ''
-            data.stations.forEach(station => {
-                // console.log(station)
-                infoText.insertAdjacentHTML('beforeend', stationTemplate(station))
-            });
-            
-            generateMapMarkers(data.stations);
-            // infoText.innerHTML = JSON.stringify(data.stations);
-                console.log(data.stations);
-        });
     });
 }

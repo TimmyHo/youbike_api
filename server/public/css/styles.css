@@ -1,3 +1,6 @@
+html.wf-loading * {
+  opacity: 0;
+}
 
 /* Optional: Makes the sample page fill the window. */
 html,
@@ -5,16 +8,20 @@ body {
     height: 100%;
     margin: 0;
     padding: 0;
+
+    background: #F8F9FA;
+    
+    font-family: 'Noto Sans TC', sans-serif;
 }
 
 .container-fluid
- {
-  height: 100%;
+{
+    height: 100%;
 
 }
 
 .row {
-  height: 90%;
+    height: 90%;
 }
 /* Always set the map height explicitly to define the size of the div
  * element that contains the map. */
@@ -23,7 +30,7 @@ body {
 }
 
 #map {
-  height: 90%;
+  height: 92%;
 }
   
 .infoContainer {
@@ -31,7 +38,8 @@ body {
 }
 
 #infoText {
-    height: 90%;
+    background: #C1C1C1;
+    height: 92%;
 }
 
 .stationCard {

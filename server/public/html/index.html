@@ -4,34 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Youbike Station Finder</title>
+    <title>YouBike Station Finder</title>
     
     <link rel="shortcut icon" href="img/ubike.ico">
     
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">   
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css"/>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
+    <script>
+      WebFont.load({
+        google: {
+          families: ['Noto Sans TC']
+        }
+      });
+    </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.0/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.6/handlebars.min.js"></script>
     
     <script id="station-template" type="text/x-handlebars-template">
-        <div class="card my-2 stationCard ">
+        <div class="card mb-1 stationCard">
             <div class="card-header p-2 d-flex">
-                <div class="flex-shrink-1">
+                <div class="flex-shrink-1 my-auto">
                     <img src="{{ getCardMarkerImage isActive numTotalBikeSpots numOccupiedBikeSpots numEmptyBikeSpots }}"/>
                 </div>
                 <div class="flex-grow-1 mx-1">
-
                     #{{stationId}} {{stationName_en}}<br>
                     (#{{stationId}} {{stationName}})
                 </div>
             </div>
         <div class="card-body p-2">
+            {{#if distanceFromPoint }}
+            <em><strong>Distance</strong>: {{roundNumber distanceFromPoint 2}} m</em><br><br>
+            {{/if}}
+
             <strong>Total Youbike Spots: </strong> {{numTotalBikeSpots}}<br>
             <strong>Empty Youbike Spots: </strong> {{numEmptyBikeSpots}}<br>
             <strong>Occupied Youbike Spots: </strong> {{numOccupiedBikeSpots}}<br>
-            <button>Directions</button>
+            <a 
+                href="https://www.google.com/maps/dir/?api=1&travelmode=walking&destination={{location.coordinates.[1]}},{{location.coordinates.[0]}}"
+                target="_blank"
+                class="btn btn-sm btn-success m-1">
+                Directions
+            </a>
         </div>
         </div>
     </script>
@@ -46,7 +64,12 @@
             <strong>Occupied Youbike Spots: </strong> {{numOccupiedBikeSpots}}<br><br>
             
             <strong>Last Updated: </strong> {{ timeFromNow lastUpdatedDate }}<br>
-            <button>Directions</button>
+            <a 
+                href="https://www.google.com/maps/dir/?api=1&travelmode=walking&destination={{location.coordinates.[1]}},{{location.coordinates.[0]}}"
+                target="_blank"
+                class="btn btn-sm btn-success m-1">
+                Directions
+            </a>
         </div>
     </script>
       
@@ -60,7 +83,7 @@
     
     <div class="container-fluid">
         <div class="text-center h1">
-            Youbike Station Finder (Taipei)
+            YouBike Station Finder (Taipei)
         </div>
 
         <div class="row">
@@ -74,10 +97,10 @@
                         <img src="img/icon_nobike.png" /> No Bikes
                     </div>
                     <div class="mx-2">
-                        <img src="img/icon_full.png" /> Full
+                        <img src="img/icon_full.png" /> No Empty Spots
                     </div>
                     <div class="mx-2">
-                        <img src="img/icon_service.png" />Out of Service
+                        <img src="img/icon_service.png" /> Out of Service
                     </div>
                     
                     <div class="m-auto">
@@ -86,12 +109,11 @@
                 </div>
             </div>
             <div class="col-4 infoContainer">
-                <div class="d-flex">
+                <div class="d-flex my-1">
                     <input id="searchTextInput" class="w-100" placeholder="Search by Name"/>
-                    <button id="searchTextButton" class="ml-2 flex-shrink-1"><i class="fas fa-search"></i></button>                
-
+                    <button type="submit" id="searchTextButton" class="ml-2 flex-shrink-1"><i class="fas fa-search"></i></button>
                 </div>
-                <div id="infoText" class="overflow-auto"></div>
+                <div id="infoText" class="overflow-auto p-1"></div>
             </div>
 
             <div class="fixed-bottom text-center m-2 aboutFooter">
