@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -82,41 +83,45 @@
 <body>
     
     <div class="container-fluid">
-        <div class="text-center h1">
+        <div class="text-center pageTitle mb-1">
             YouBike Station Finder (Taipei)
         </div>
 
         <div class="row">
-            <div class="col-8 mapContainer">
+            <div class="col-12 col-md-8 mapContainer">
                 <div id="map"></div>
-                <div class="d-flex my-1">
-                    <div class="mx-2">
-                        <img src="img/icon_nomo.png" /> Operational
+                <div class="d-flex my-1 legendContent">
+                    <div class="d-flex flex-column mx-2">
+                        <img src="img/icon_nomo.png"/>
+                        <div class="m-auto">OK</div>
                     </div>
-                    <div class="mx-2">
-                        <img src="img/icon_nobike.png" /> No Bikes
+                    <div class="d-flex flex-column mx-2">
+                        <img class="img" src="img/icon_nobike.png" />
+                        <div class="m-auto">Empty</div>
                     </div>
-                    <div class="mx-2">
-                        <img src="img/icon_full.png" /> No Empty Spots
+                    <div class="d-flex flex-column mx-2">
+                        <img src="img/icon_full.png" />
+                        <div class="m-auto">Full</div>
                     </div>
-                    <div class="mx-2">
-                        <img src="img/icon_service.png" /> Out of Service
+                    <div class="d-flex flex-column mx-2">
+                        <img src="img/icon_service.png" />
+                        <div class="m-auto">Inactive</div>
                     </div>
                     
                     <div class="m-auto">
-                        <button id="refreshButton">Refresh Map</button>
+                        <button id="refreshButton" class="btn btn-sm btn-info">Refresh Map</button>
                     </div>
                 </div>
             </div>
-            <div class="col-4 infoContainer">
+            <div class="col-12 col-md-4 infoContainer">
                 <div class="d-flex my-1">
-                    <input id="searchTextInput" class="w-100" placeholder="Search by Name"/>
-                    <button type="submit" id="searchTextButton" class="ml-2 flex-shrink-1"><i class="fas fa-search"></i></button>
+                    <input id="searchTextInput" class="w-100 form-control" placeholder="Search by Name"/>
+                    <button type="submit" id="searchTextButton" class="btn btn-sm btn-dark ml-1 flex-shrink-1"><i class="fas fa-search"></i></button>
                 </div>
                 <div id="infoText" class="overflow-auto p-1"></div>
             </div>
 
-            <div class="fixed-bottom text-center m-2 aboutFooter">
+            <div class="fixed-bottom text-center d-none d-md-block m-2 aboutFooter">
                 Made by Tim Hsiung (<a href="http://www.made-by-tim.com">www.made-by-tim.com</a>)
             </div>
         </div>

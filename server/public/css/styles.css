@@ -1,45 +1,58 @@
 html.wf-loading * {
-  opacity: 0;
+    opacity: 0;
 }
 
 /* Optional: Makes the sample page fill the window. */
 html,
 body {
-    height: 100%;
+    height: 100vh;
     margin: 0;
     padding: 0;
 
-    background: #F8F9FA;
+    background: #E0F0F0;
     
     font-family: 'Noto Sans TC', sans-serif;
 }
 
 .container-fluid
 {
-    height: 100%;
+    height: 100vh;
+}
 
+.pageTitle {
+    font-size: 1.2em;
 }
 
 .row {
-    height: 90%;
+    height: 95vh;
 }
 /* Always set the map height explicitly to define the size of the div
- * element that contains the map. */
+* element that contains the map. */
+
+
 .mapContainer {
-    height: 100%;
+    height: 61vh;
 }
 
 #map {
-  height: 92%;
+    height: 52vh;
 }
-  
+
 .infoContainer {
-    height: 100%;
+    height: 32vh;
 }
 
 #infoText {
+    height: 27vh;
     background: #C1C1C1;
-    height: 92%;
+}
+
+.legendContent {
+    font-size: 0.7em;
+}
+
+.legendContent img {
+    object-fit: none;
 }
 
 .stationCard {
@@ -51,6 +64,28 @@ body {
 }
 
 .aboutFooter {
-  font-style: italic;
-  font-size: 0.8em;
+    font-style: italic;
+    font-size: 0.8em;
+}
+
+@media (min-width: 768px) {
+    .pageTitle {
+        font-size: 1.5em;
+    }
+
+    .mapContainer {
+        height: 90vh;
+    }
+    
+    #map {
+    height: 85vh;
+    }
+    
+    .infoContainer {
+        height: 90vh;
+    }
+    
+    #infoText {
+        height: 85vh;
+    }
 }
