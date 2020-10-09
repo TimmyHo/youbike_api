@@ -4,6 +4,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./server
+    image: gcr.io/made-by-tim/youbike-server
     environment:
       - MONGODB_URL
     volumes:
@@ -15,6 +16,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./worker
+    image: gcr.io/made-by-tim/youbike-worker
     environment:
       - MONGODB_URL
     volumes:
